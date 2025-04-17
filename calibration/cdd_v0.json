@@ -1,0 +1,57 @@
+[
+    {
+      "class": "C1",
+      "domain": "Logical",
+      "label": "Simple arithmetic identity",
+      "text": "2 + 2 = 4"
+    },
+    {
+      "class": "C1",
+      "domain": "Code",
+      "label": "Hello‑world program (idempotent)",
+      "text": "print('hello')"
+    },
+    {
+      "class": "C1",
+      "domain": "Graph",
+      "label": "Undirected triangle loop",
+      "edges": [[1,2],[2,3],[3,1]]
+    },
+    {
+      "class": "C2",
+      "domain": "NaturalLanguage",
+      "label": "Heuristic social claim",
+      "text": "People tend to follow incentives."
+    },
+    {
+      "class": "C2",
+      "domain": "NaturalLanguage",
+      "label": "Context‑bound proverb",
+      "text": "Honesty is the best policy."
+    },
+    {
+      "class": "C2",
+      "domain": "Logical",
+      "label": "Excluded middle (intuitionist edge‑case)",
+      "text": "P ∨ ¬P"
+    },
+    {
+      "class": "C3",
+      "domain": "NaturalLanguage",
+      "label": "Liar paradox",
+      "text": "This sentence is false."
+    },
+    {
+      "class": "C3",
+      "domain": "Logical",
+      "label": "Russell set definition",
+      "text": "Let R = { x | x ∉ x }"
+    },
+    {
+      "class": "C3",
+      "domain": "Code",
+      "label": "Infinite recursion",
+      "text": "def f(): return f()"
+    }
+  ]
+  
