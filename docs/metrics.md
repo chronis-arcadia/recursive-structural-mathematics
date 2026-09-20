@@ -12,15 +12,15 @@ The generic object measured here is **drift**.
 
 For seed x_0 and recursive state x_t, define projections phi_j and normalized distances d_j.
 
-[
+$
 D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_0)) \in [0,1].
-]
+$
 
 Collect them as
 
-[
+$
 \mathbf{D}_t = (D_{t,1}, \ldots, D_{t,m}).
-]
+$
 
 A component must document:
 
@@ -86,12 +86,12 @@ Let L(.) be a declared compressor or encoding length.
 
 A simple normalized component is
 
-[
+$
 D_{DL}(x_t,x_0)
 =
 \frac{|L(x_t)-L(x_0)|}
 {\max(L(x_t),L(x_0),1)}.
-]
+$
 
 This is a compression proxy, not Kolmogorov complexity.
 
@@ -115,15 +115,15 @@ The vector should be retained.
 
 When a scalar is operationally necessary, define
 
-[
+$
 S_t = \sum_j w_j D_{t,j}
-]
+$
 
 subject to
 
-[
+$
 w_j \ge 0, \qquad \sum_j w_j = 1.
-]
+$
 
 Weights must be versioned with the audit profile.
 
@@ -135,29 +135,29 @@ For score series S_0, ..., S_k:
 
 ### Mean tail score
 
-[
+$
 \mu_{tail} = \frac{1}{|H|}\sum_{t\in H}S_t.
-]
+$
 
 ### Peak score
 
-[
+$
 S_{max}=\max_t S_t.
-]
+$
 
 ### Terminal score
 
-[
+$
 S_k.
-]
+$
 
 ### Linear drift slope
 
 For t = 0,...,k, fit
 
-[
+$
 S_t \approx a + bt.
-]
+$
 
 The coefficient b is a crude drift-rate estimate.
 
@@ -165,9 +165,9 @@ The coefficient b is a crude drift-rate estimate.
 
 One simple statistic is
 
-[
+$
 R = \frac{1}{k}\sum_{t=1}^{k} \mathbf{1}[S_t < S_{t-1}].
-]
+$
 
 More useful domain-specific recovery measures may ask whether the orbit re-enters a declared stable basin after perturbation.
 
@@ -175,9 +175,9 @@ More useful domain-specific recovery measures may ask whether the orbit re-enter
 
 For stochastic transforms with replicate r,
 
-[
+$
 \sigma_t^2 = \operatorname{Var}_r[S_t^{(r)}].
-]
+$
 
 Always report replicate count.
 
@@ -187,9 +187,9 @@ Exact state repetition is easy to detect by hashing canonical states.
 
 Projected cycles can also be useful:
 
-[
+$
 \phi(x_t) = \phi(x_{t-p})
-]
+$
 
 for period p > 0.
 
@@ -217,27 +217,27 @@ Then:
 
 **C1** if
 
-[
+$
 \max_{t\in H} S_t \le \alpha
-]
+$
 
 and
 
-[
+$
 |slope(S)| \le \beta.
-]
+$
 
 **C2** if the C1 rule fails but
 
-[
+$
 \max_{t\in H} S_t \le \gamma
-]
+$
 
 and
 
-[
+$
 slope(S) \le \beta.
-]
+$
 
 Otherwise **C3**.
 
@@ -266,15 +266,15 @@ Suppose multiple evaluators e produce scores S_t^(e).
 
 Report:
 
-[
+$
 \bar S_t = \frac{1}{|E|}\sum_e S_t^{(e)}
-]
+$
 
 and
 
-[
+$
 V_t = \frac{1}{|E|}\sum_e (S_t^{(e)}-\bar S_t)^2.
-]
+$
 
 High V_t means the result is evaluator-sensitive.
 

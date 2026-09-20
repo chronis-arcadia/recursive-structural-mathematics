@@ -28,35 +28,35 @@ Let X be a state space and let x_0 in X be the seed.
 
 A recursive transformation is either a deterministic function
 
-[
+$
 T: X \to X
-]
+$
 
 or a stochastic kernel
 
-[
+$
 K_\theta(x' \mid x)
-]
+$
 
 parameterized by theta.
 
 The recursive orbit is
 
-[
+$
 x_0, x_1, \ldots, x_k
-]
+$
 
 with
 
-[
+$
 x_{t+1} = T(x_t)
-]
+$
 
 or
 
-[
+$
 x_{t+1} \sim K_\theta(\cdot \mid x_t).
-]
+$
 
 Nothing about the orbit is epistemically privileged by default. It is simply a trajectory induced by the chosen operator.
 
@@ -66,15 +66,15 @@ Raw representation distance is often the wrong quantity.
 
 For each dimension j, define a projection or invariant extractor
 
-[
+$
 \phi_j: X \to Y_j
-]
+$
 
 and a normalized distance
 
-[
+$
 d_j: Y_j \times Y_j \to [0,1].
-]
+$
 
 Examples:
 
@@ -89,21 +89,21 @@ Examples:
 
 The per-step drift component is
 
-[
+$
 D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_0)).
-]
+$
 
 The drift vector is
 
-[
+$
 \mathbf{D}_t = (D_{t,1}, \ldots, D_{t,m}).
-]
+$
 
 The seed is used as the default anchor because cumulative pairwise comparison can hide gradual displacement. Pairwise step drift may also be recorded:
 
-[
+$
 \Delta D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_{t-1})).
-]
+$
 
 Both are useful and answer different questions.
 
@@ -113,9 +113,9 @@ A result has no meaning without its profile.
 
 Define
 
-[
+$
 P = (K, \Phi, d, k, \theta, w, \tau)
-]
+$
 
 where:
 
@@ -129,15 +129,15 @@ where:
 
 A classification is written as
 
-[
+$
 C_P(x)
-]
+$
 
 or explicitly
 
-[
+$
 C(x \mid K, \Phi, d, k, \theta, w, \tau).
-]
+$
 
 Calling an object simply "C1" without the profile is incomplete.
 
@@ -147,21 +147,21 @@ A recursive audit should preserve the full vector trajectory. Scalar summaries a
 
 For an optional weighted scalar score,
 
-[
+$
 S_t = \sum_{j=1}^{m} w_j D_{t,j},
 \qquad
 w_j \ge 0,
 \qquad
 \sum_j w_j = 1.
-]
+$
 
 Useful summaries include:
 
 ### 5.1 Tail distortion
 
-[
+$
 \bar S_{tail} = \frac{1}{|H|}\sum_{t \in H} S_t
-]
+$
 
 where H is a declared tail window.
 
@@ -173,9 +173,9 @@ Fit a least-squares line to S_t over recursion depth. Positive slope suggests ac
 
 For stochastic transforms, repeat the orbit R times and estimate
 
-[
+$
 \operatorname{Var}[S_t].
-]
+$
 
 High variance means the stability claim is sensitive to sampling.
 
@@ -223,15 +223,15 @@ RSM must never infer factual or formal correctness solely from recursive stabili
 
 Let V(x) be an external validator when one exists:
 
-[
+$
 V(x) \in \{true, false, unknown\}.
-]
+$
 
 Then the analysis space is at least two-dimensional:
 
-[
+$
 (C_P(x), V(x)).
-]
+$
 
 Examples:
 
@@ -313,9 +313,9 @@ That disagreement is itself measurable.
 
 For evaluators e in E, estimate
 
-[
+$
 D^{(e)}_{t,j}
-]
+$
 
 and report cross-evaluator variance or disagreement rather than calling consensus "observer-independent truth."
 
