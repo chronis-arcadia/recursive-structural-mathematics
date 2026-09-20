@@ -1,401 +1,333 @@
-# RSM v0.2 Primer — Recursive Structural Stability
+# Recursive Structural Mathematics — Primer
 
 ## 1. Scope
 
-RSM studies the behavior of representations under repeated transformation.
+RSM studies representation stability under repeated transformation.
 
-The object of study may be text, code, a graph, a proof representation, a structured record, a plan, or any other state for which the researcher can define:
+An audit defines:
 
-1. a transformation process,
-2. one or more invariants or projections,
-3. distance functions,
-4. a recursion horizon,
-5. decision thresholds.
+1. a state space,
+2. a seed object,
+3. a transformation process,
+4. one or more projections,
+5. distance functions,
+6. recursion depth,
+7. classification parameters.
 
-RSM does **not** define truth. It measures robustness relative to those choices.
+Applicable domains include text, code, graphs, symbolic expressions, plans, structured records, and mixed representations.
 
-The original RSM documents conflated three separate questions:
+## 2. Recursive process
 
-- Is a proposition true?
-- Is a representation stable under repeated transformation?
-- Is a downstream system justified in acting on the representation?
+Let (X) be a state space and (x_0 \in X) the seed.
 
-v0.2 separates them.
-
-## 2. Formal object
-
-Let X be a state space and let x_0 in X be the seed.
-
-A recursive transformation is either a deterministic function
+A deterministic transform is
 
 $$
 T: X \to X
 $$
 
-or a stochastic kernel
+with orbit
+
+$$
+x_{t+1}=T(x_t).
+$$
+
+A stochastic transform is represented by
 
 $$
 K_\theta(x' \mid x)
 $$
 
-parameterized by theta.
-
-The recursive orbit is
-
-$$
-x_0, x_1, \ldots, x_k
-$$
-
 with
-
-$$
-x_{t+1} = T(x_t)
-$$
-
-or
 
 $$
 x_{t+1} \sim K_\theta(\cdot \mid x_t).
 $$
 
-Nothing about the orbit is epistemically privileged by default. It is simply a trajectory induced by the chosen operator.
-
-## 3. Invariants and projections
-
-Raw representation distance is often the wrong quantity.
-
-For each dimension j, define a projection or invariant extractor
+The resulting orbit is
 
 $$
-\phi_j: X \to Y_j
+x_0,x_1,\ldots,x_k.
 $$
 
-and a normalized distance
+## 3. Projections and distances
+
+Each audit component uses a projection
 
 $$
-d_j: Y_j \times Y_j \to [0,1].
+\phi_j:X\to Y_j
 $$
 
-Examples:
-
-- semantic representation,
-- abstract syntax tree,
-- graph topology,
-- normalized logical form,
-- schema shape,
-- task output,
-- compressed description length,
-- domain-specific constraints.
-
-The per-step drift component is
+and normalized distance
 
 $$
-D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_0)).
+d_j:Y_j\times Y_j\to[0,1].
+$$
+
+The seed-anchored drift component is
+
+$$
+D_{t,j}=d_j(\phi_j(x_t),\phi_j(x_0)).
 $$
 
 The drift vector is
 
 $$
-\mathbf{D}_t = (D_{t,1}, \ldots, D_{t,m}).
+\mathbf{D}_t=(D_{t,1},\ldots,D_{t,m}).
 $$
 
-The seed is used as the default anchor because cumulative pairwise comparison can hide gradual displacement. Pairwise step drift may also be recorded:
+Pairwise step drift may also be recorded:
 
 $$
-\Delta D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_{t-1})).
+\Delta D_{t,j}=d_j(\phi_j(x_t),\phi_j(x_{t-1})).
 $$
 
-Both are useful and answer different questions.
+Seed-anchored drift measures displacement from the initial state. Pairwise drift measures local movement.
 
 ## 4. Audit profile
 
-A result has no meaning without its profile.
-
-Define
+An audit profile is
 
 $$
-P = (K, \Phi, d, k, \theta, w, \tau)
+P=(K,\Phi,d,k,\theta,w,\tau)
 $$
 
 where:
 
-- K is the transform or transform family,
-- Phi is the set of projections,
-- d is the set of distance functions,
-- k is recursion depth,
-- theta contains transform parameters,
-- w optionally contains component weights,
-- tau contains classification thresholds.
+- (K): transform or transform family,
+- (Phi): projections,
+- (d): distance functions,
+- (k): recursion depth,
+- (	heta): transform parameters,
+- (w): optional aggregation weights,
+- (	au): classification parameters.
 
-A classification is written as
+Classification is written as
 
 $$
 C_P(x)
 $$
 
-or explicitly
+or
 
 $$
-C(x \mid K, \Phi, d, k, \theta, w, \tau).
+C(x\mid K,\Phi,d,k,\theta,w,\tau).
 $$
 
-Calling an object simply "C1" without the profile is incomplete.
+The profile is part of every reported classification.
 
 ## 5. Derived statistics
 
-A recursive audit should preserve the full vector trajectory. Scalar summaries are secondary.
-
-For an optional weighted scalar score,
+For optional scalar aggregation,
 
 $$
-S_t = \sum_{j=1}^{m} w_j D_{t,j},
+S_t=\sum_{j=1}^{m}w_jD_{t,j},
 \qquad
-w_j \ge 0,
+w_j\ge0,
 \qquad
-\sum_j w_j = 1.
+\sum_jw_j=1.
 $$
 
-Useful summaries include:
+The full vector trajectory remains available alongside any scalar score.
 
 ### 5.1 Tail distortion
 
-$$
-\bar S_{tail} = \frac{1}{|H|}\sum_{t \in H} S_t
-$$
+For tail window (H),
 
-where H is a declared tail window.
+$$
+\bar S_{tail}=\frac{1}{|H|}\sum_{t\in H}S_t.
+$$
 
 ### 5.2 Drift slope
 
-Fit a least-squares line to S_t over recursion depth. Positive slope suggests accumulating damage; negative slope suggests recovery.
+Fit
+
+$$
+S_t\approx a+bt.
+$$
+
+The coefficient (b) estimates linear drift rate.
 
 ### 5.3 Replicate variance
 
-For stochastic transforms, repeat the orbit R times and estimate
+For stochastic transforms with replicate (r),
 
 $$
-\operatorname{Var}[S_t].
+\sigma_t^2=\operatorname{Var}_r[S_t^{(r)}].
 $$
-
-High variance means the stability claim is sensitive to sampling.
 
 ### 5.4 Recovery
 
-A system may move away from the seed and later return to an invariant basin. Recovery therefore matters independently from peak distortion.
+Recovery records re-entry into a lower-drift region after displacement.
 
 ### 5.5 Cycles
 
-Repeated states or repeated projected states can reveal fixed points and limit cycles. A two-cycle is structurally different from unbounded divergence.
+A projected cycle of period (p) satisfies
+
+$$
+\phi(x_t)=\phi(x_{t-p})
+$$
+
+for (p>0).
+
+Fixed points, limit cycles, reversible alternation, and divergent trajectories are distinct orbit structures.
 
 ## 6. Stability classes
 
-The default classes are operational, not ontological.
-
 ### C1 — Stable basin
 
-Use C1 when the declared invariants remain below the profile's stable threshold over the evaluation window and no meaningful positive drift trend is present.
-
-Interpretation:
-
-> Under profile P, the representation is robust to this recursive transformation regime.
-
-Nothing more.
+The declared invariants remain inside the stable region of the audit profile and the trajectory lacks a material positive drift trend.
 
 ### C2 — Bounded / context-sensitive
 
-Use C2 when drift is material but bounded, oscillatory, recoverable, or highly dependent on transform/evaluator choice.
-
-Interpretation:
-
-> Under profile P, behavior is structured but not uniformly stable.
+Drift is non-trivial but bounded, oscillatory, recoverable, or highly sensitive to evaluator or transform choice.
 
 ### C3 — Divergent / destructive
 
-Use C3 when the declared invariants cross a divergence threshold, exhibit sustained positive drift, or collapse irreversibly.
+The trajectory crosses the divergence boundary, exhibits sustained positive drift, or loses declared invariants irreversibly.
 
-Interpretation:
+## 7. External validation
 
-> Under profile P, recursive transformation destroys the declared structure.
+Stability and correctness occupy separate channels.
 
-## 7. The truth/stability firewall
-
-RSM must never infer factual or formal correctness solely from recursive stability.
-
-Let V(x) be an external validator when one exists:
+Let
 
 $$
-V(x) \in \{true, false, unknown\}.
+V(x)\in\{pass,fail,unknown\}
 $$
 
-Then the analysis space is at least two-dimensional:
+represent an external validator.
+
+The combined result is
 
 $$
-(C_P(x), V(x)).
+(C_P(x),V(x)).
 $$
 
 Examples:
 
-- (C1, true): robust correct representation.
-- (C1, false): robust misconception.
-- (C3, true): true content represented or transformed fragily.
-- (C3, false): unstable error.
+- ((C1,pass)): stable validated representation,
+- ((C1,fail)): stable invalid representation,
+- ((C3,pass)): validated content with fragile recursive representation,
+- ((C3,fail)): unstable invalid representation.
 
-For theorem proving, V may be a proof checker.
-For code, V may be tests, formal verification, or execution.
-For factual claims, V may be curated evidence or a trusted database.
-For open-ended claims, V may remain unknown.
+Validator examples include:
 
-Unknown is a legitimate result.
+- proof checkers,
+- program tests,
+- formal verification,
+- trusted databases,
+- source-grounded evaluation,
+- constraint systems.
 
 ## 8. RIPE
 
-**RIPE — Recursive Integrity Pulse Engine** is the execution layer.
-
-A RIPE run should record:
+**RIPE — Recursive Integrity Pulse Engine** executes an audit and records:
 
 - seed,
-- transform identity/version,
-- transform parameters,
+- transform identity and parameters,
 - recursion depth,
-- random seed when relevant,
-- every intermediate state or a reproducible hash,
-- every drift component,
-- aggregate score if used,
+- random seed when applicable,
+- intermediate states or reproducible hashes,
+- component drift trajectories,
+- aggregate trajectory when configured,
 - replicate statistics,
-- detected cycles,
-- classification profile,
-- final stability class.
-
-RIPE is a measurement engine. It is not a theorem prover or truth oracle.
+- cycle metadata,
+- profile identifier,
+- stability class.
 
 ## 9. SDL
 
-**SDL — Semantic Delay Layer** is retained as a policy concept, but its role is narrower.
+**SDL — Semantic Delay Layer** is a decision policy for unresolved states.
 
-SDL means:
+Typical routing conditions include:
 
-> Do not force a semantic or operational commitment when the evidence state is unstable, highly variable, or unresolved.
+- high cross-evaluator variance,
+- high replicate variance,
+- pending external validation,
+- unstable recursive trajectory,
+- unresolved transform disagreement.
 
-Examples:
+Available actions include:
 
-- abstain when model ensembles disagree,
-- delay an agent action while a verifier is pending,
-- request evidence when recursive transformations disagree,
-- keep several hypotheses alive rather than prematurely collapsing them into one label.
-
-SDL is therefore related to selective prediction, abstention, uncertainty gating, and human-in-the-loop control.
-
-It does not create a "Schrodinger truth state." It is a decision policy under uncertainty.
+- commit,
+- abstain,
+- run another evaluator,
+- request external verification,
+- continue the audit,
+- escalate to human review.
 
 ## 10. CPP
 
-**CPP — Core/Policy Partition Principle** replaces the old claim of an immutable epistemic Tier 1.
+**CPP — Core/Policy Partition Principle** separates the audit definition from the adaptive policy being evaluated.
 
-The useful engineering rule is:
+During an audit, the policy cannot modify:
 
-> Measurement definitions and safety invariants used to evaluate a system must not be silently rewritten by the adaptive policy being evaluated.
+- metric definitions,
+- protected invariants,
+- thresholds,
+- evaluator identities,
+- aggregation weights,
+- validator criteria.
 
-Examples:
-
-- an optimizer cannot lower its own failure threshold to pass evaluation,
-- a model cannot redefine a protected invariant after violating it,
-- learned heuristics may propose a new metric, but adoption requires an explicit versioned profile change.
-
-CPP is a versioning and trust-boundary rule.
+A changed profile receives a distinct version or identifier.
 
 ## 11. Multi-evaluator analysis
 
-The old "observer neutrality" language is removed.
-
-Different evaluators can disagree because they have different inductive biases, embeddings, parsers, training data, or noise.
-
-That disagreement is itself measurable.
-
-For evaluators e in E, estimate
+For evaluator (e\in E),
 
 $$
 D^{(e)}_{t,j}
 $$
 
-and report cross-evaluator variance or disagreement rather than calling consensus "observer-independent truth."
+records evaluator-specific drift.
 
-Agreement strengthens robustness evidence only with respect to the declared evaluator set.
+Cross-evaluator disagreement is measured directly from these scores. Agreement and disagreement are interpreted relative to the declared evaluator set.
 
-## 12. Compression
+## 12. Compression features
 
-Compression remains useful but must be stated carefully.
-
-Description length can reveal regularity and loss of representational structure, but shorter description does not imply greater truth.
-
-RSM may use:
+Description-length features may use:
 
 - compressed byte length,
-- minimum description length approximations,
+- minimum-description-length approximations,
 - grammar size,
 - AST complexity,
 - graph encoding length.
 
-Call the resulting quantity a **description-length component**, not generic entropy.
+For compressor or encoding-length function (L),
 
-Exact Kolmogorov complexity is not computable in general; practical implementations necessarily use proxies.
+$$
+D_{DL}(x_t,x_0)
+=
+\frac{|L(x_t)-L(x_0)|}
+{\max(L(x_t),L(x_0),1)}.
+$$
 
-## 13. Relation to dynamical systems
+Description length is one drift component among others.
 
-RSM can be understood as empirical analysis of an orbit under a transform.
+## 13. Dynamical interpretation
 
-Questions such as these become natural:
+A recursive audit defines an orbit under a transform. Analysis may include:
 
-- Does the orbit approach a fixed point?
-- Does it enter a limit cycle?
-- Is there a stable basin?
-- How sensitive is the trajectory to perturbations?
-- Does distortion grow approximately linearly or explosively?
-- Are there phase changes as transform strength or temperature changes?
+- fixed points,
+- limit cycles,
+- basins of attraction,
+- perturbation sensitivity,
+- linear or nonlinear drift growth,
+- recovery behavior,
+- parameter-dependent phase changes.
 
-This language is more precise than treating every failure as "entropy metastasis."
+## 14. Evaluation
 
-## 14. What would make RSM scientifically interesting?
+The primary empirical question is whether recursive trajectory features provide predictive value beyond simpler baselines.
 
-RSM earns its machinery only if recursive measurements explain something that simpler methods miss.
+Useful outcomes include:
 
-A useful result would show, for example, that recursive drift:
+- downstream failure prediction,
+- early-warning performance,
+- recovery detection,
+- brittleness detection,
+- uncertainty routing,
+- transform-specific failure attribution.
 
-- predicts downstream task failure earlier than one-shot similarity,
-- separates recoverable perturbation from irreversible degradation,
-- identifies brittle representations that pass ordinary tests,
-- provides useful uncertainty signals across model families,
-- improves abstention or routing decisions.
-
-A null result is acceptable.
-
-If direct task evaluation explains everything and recursive drift adds nothing, the framework should be narrowed or abandoned.
-
-## 15. Non-claims
-
-RSM v0.2 explicitly does not claim:
-
-- to bypass or neutralize Goedel incompleteness,
-- that paradoxes are false because they drift,
-- that multi-model agreement is observer neutrality,
-- that compression reveals metaphysical truth,
-- that recursive stability replaces proof,
-- that LLM agreement validates a theory,
-- that all useful distances are forms of entropy,
-- that C1/C2/C3 are universal intrinsic properties.
-
-These exclusions are part of the specification.
-
-## 16. Current research program
-
-The next useful work is experimental:
-
-1. build transform families with controlled corruption strength,
-2. define domain-specific invariants,
-3. collect tasks with external validators,
-4. run recursive audits across depths and replicates,
-5. compare against simple baselines,
-6. perform ablations over metrics and recursion depth,
-7. test whether drift adds predictive value,
-8. publish negative results as readily as positive ones.
-
-The framework should survive because its measurements are useful, not because its vocabulary can reinterpret every criticism as confirmation.
+Evaluation uses held-out data, baseline comparisons, ablations, negative controls, and reproducible audit profiles.

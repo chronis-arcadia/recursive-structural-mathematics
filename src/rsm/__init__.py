@@ -1,4 +1,4 @@
-"""Reference implementation for RSM v0.2."""
+"""Reference implementation for Recursive Structural Mathematics."""
 
 from .engine import AuditProfile, AuditResult, run_audit
 

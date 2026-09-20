@@ -1,12 +1,10 @@
 # RSM.VEC — Recursive Drift Vector Analysis
 
-RSM.VEC analyzes **where drift comes from** and **how sensitive the result is to transform and evaluator choice**.
+RSM.VEC decomposes recursive drift across metrics, transforms, evaluators, and replicates.
 
-It does not attribute truth.
+## 1. Measurement tensor
 
-## 1. Inputs
-
-For seed x_0, transform family K_q, evaluator e, component j, and recursion step t:
+For seed (x_0), transform family (K_q), evaluator (e), component (j), and step (t),
 
 $$
 D^{(q,e)}_{t,j}
@@ -17,7 +15,7 @@ d^{(e)}_j(
 ).
 $$
 
-The full measurement object is therefore a tensor over:
+The measurement tensor spans:
 
 - recursion step,
 - metric component,
@@ -25,59 +23,49 @@ The full measurement object is therefore a tensor over:
 - evaluator,
 - replicate.
 
-Collapsing this object too early destroys information.
-
 ## 2. Drift attribution
 
-A practical attribution report should ask:
+An attribution report records:
 
-- Which metric component moved first?
-- Which component dominates peak drift?
-- Is the effect specific to one transform family?
-- Is the effect specific to one evaluator?
-- Does drift recover?
-- Is the process cyclic?
-- Is the variance between stochastic replicates larger than the mean effect?
+- first component to move,
+- dominant peak component,
+- transform-specific effects,
+- evaluator-specific effects,
+- recovery,
+- cycle structure,
+- replicate variance.
 
 ## 3. Cross-evaluator variance
 
-The old term "Observer Drift Variance" is replaced by the more literal **Cross-Evaluator Variance (CEV)**.
-
-For scalar scores:
+For scalar score (S_t^{(e)}),
 
 $$
 CEV_t
 =
 \frac{1}{|E|}
 \sum_e
-(S_t^{(e)} - \bar S_t)^2.
+(S_t^{(e)}-\bar S_t)^2.
 $$
 
-For vector measurements, compute component-wise variance.
-
-High CEV means the classification is sensitive to evaluator choice.
+Component-wise CEV uses the same form for each drift dimension.
 
 ## 4. Cross-transform variance
 
-Likewise,
+For transform family (q),
 
 $$
 CTV_t
 =
 \frac{1}{|Q|}
 \sum_q
-(S_t^{(q)} - \bar S_t)^2.
+(S_t^{(q)}-\bar S_t)^2.
 $$
 
-High CTV means stability depends strongly on the perturbation or regeneration regime.
-
-A seed that is C1 under identity and C3 under lossy summarization is not contradictory. Those are different profiles.
+CTV measures sensitivity to perturbation regime.
 
 ## 5. Recursive Drift Chain Monitor
 
-The retained **RDCM** concept is simply trajectory monitoring.
-
-For each component or scalar score, store:
+RDCM stores, per component or scalar score:
 
 - current value,
 - first difference,
@@ -87,71 +75,57 @@ For each component or scalar score, store:
 - replicate variance,
 - cycle metadata.
 
-Alerts should be based on declared operating thresholds rather than metaphors such as "entropy metastasis."
+Alerts are profile-defined.
 
 ## 6. Attribution Memory Buffer
 
-The **AMB** is a cache of recent audit signatures.
-
-A signature may include:
+AMB stores audit signatures containing:
 
 - profile identifier,
-- transform/evaluator versions,
+- transform and evaluator versions,
 - score trajectory,
 - vector trajectory,
 - cycle period,
-- class,
-- external validator result if available.
+- stability class,
+- external validator result.
 
-Useful purposes:
+Applications include:
 
 - regression detection,
-- repeated-failure clustering,
+- failure clustering,
 - profile comparison,
 - reproducibility,
 - audit trails.
 
-The AMB must not silently convert previous labels into ground truth.
-
 ## 7. SDL integration
 
-SDL may use VEC outputs to decide whether to:
-
-- commit,
-- abstain,
-- request another evaluator,
-- request external verification,
-- continue recursion,
-- escalate to a human.
+SDL consumes VEC outputs for routing.
 
 Example policy:
 
 - low drift + low CEV + validator pass -> commit,
-- low drift + validator fail -> reject despite stability,
-- moderate drift + high CEV -> abstain / gather evidence,
-- high drift + validator unavailable -> hold rather than infer falsehood.
+- low drift + validator fail -> reject,
+- moderate drift + high CEV -> additional evaluation,
+- high drift + unavailable validator -> hold,
+- unresolved disagreement -> human review.
 
 ## 8. CPP integration
 
-A policy may adapt weights or propose new metrics, but a running audit cannot rewrite the profile used to judge that same run.
+Audit parameters remain fixed for the duration of a run.
 
-Profile changes create a new version.
+Changing metric definitions, invariants, weights, thresholds, evaluator sets, or validator criteria creates a distinct audit profile.
 
-This prevents an adaptive system from moving its own goalposts.
+## 9. Report schema
 
-## 9. Minimum report
-
-Every RSM.VEC report should include:
+An RSM.VEC report contains:
 
 1. profile identifier,
 2. transform family and parameters,
 3. evaluator set,
 4. recursion depth and replicate count,
 5. component trajectories,
-6. scalar trajectory if used,
-7. CEV / CTV where applicable,
-8. cycles,
-9. class,
-10. external validator result separately.
-
-Anything less is an anecdote, not a reproducible recursive audit.
+6. scalar trajectory when configured,
+7. CEV and CTV,
+8. cycle metadata,
+9. stability class,
+10. external validator result.

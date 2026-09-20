@@ -1,7 +1,6 @@
 {
   "schema_version": "1.0",
-  "name": "RSM calibration and sanity controls",
-  "principle": "Stability labels are conditional on a declared audit profile and are independent from external truth labels.",
+  "name": "RSM calibration controls",
   "cases": [
     {
       "id": "identity_true_arithmetic",
@@ -10,7 +9,7 @@
       "transform_profile": "identity",
       "external_truth": "true",
       "expected_stability": "C1",
-      "purpose": "Positive stable/correct control."
+      "purpose": "Stable validated control."
     },
     {
       "id": "identity_false_astronomy",
@@ -19,7 +18,7 @@
       "transform_profile": "identity",
       "external_truth": "false",
       "expected_stability": "C1",
-      "purpose": "Hard guard against interpreting C1 as truth."
+      "purpose": "Stable invalid control."
     },
     {
       "id": "identity_liar_string",
@@ -28,7 +27,7 @@
       "transform_profile": "identity",
       "external_truth": "unknown",
       "expected_stability": "C1",
-      "purpose": "A paradoxical string can be representationally stable."
+      "purpose": "Representational stability control."
     },
     {
       "id": "reverse_liar_two_cycle",
@@ -38,7 +37,7 @@
       "external_truth": "unknown",
       "expected_stability": "C3",
       "expected_cycle_period": 2,
-      "purpose": "Shows transform-dependence and catches endpoint cherry-picking."
+      "purpose": "Period-2 trajectory control."
     },
     {
       "id": "reverse_palindrome",
@@ -47,12 +46,12 @@
       "transform_profile": "normalized_palindrome_reverse",
       "external_truth": "not_applicable",
       "expected_stability": "C1",
-      "purpose": "Same transform family can preserve some structures and disrupt others."
+      "purpose": "Transform-invariant control."
     },
     {
       "id": "progressive_text_erosion",
       "domain": "text",
-      "input": "recursive structure should survive declared transforms",
+      "input": "recursive structure under declared transforms",
       "transform_profile": "halve_suffix_each_step",
       "external_truth": "not_applicable",
       "expected_stability": "C3",
@@ -65,7 +64,7 @@
       "transform_profile": "token_permutation",
       "external_truth": "not_applicable",
       "expected_stability": "metric_dependent",
-      "purpose": "Sequence distance and token-set distance should disagree."
+      "purpose": "Metric-sensitivity control."
     },
     {
       "id": "code_refactor",
@@ -74,7 +73,7 @@
       "transform_profile": "semantics_preserving_refactor",
       "external_truth": "validator_required",
       "expected_stability": "profile_dependent",
-      "purpose": "Future benchmark case: task behavior should dominate surface similarity."
+      "purpose": "Code behavior control."
     },
     {
       "id": "code_bug_injection",
@@ -83,7 +82,7 @@
       "transform_profile": "operator_mutation_plus_to_minus",
       "external_truth": "validator_required",
       "expected_stability": "profile_dependent",
-      "purpose": "Semantic/task metrics should detect corruption that syntax metrics may underweight."
+      "purpose": "Semantic corruption control."
     }
   ]
 }

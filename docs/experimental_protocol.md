@@ -1,59 +1,55 @@
 # Experimental Protocol
 
-## Research question
+## 1. Primary hypothesis
 
-Does recursive structural drift provide useful predictive information about downstream failure beyond simpler one-shot baselines?
+Recursive trajectory features provide predictive information about downstream failure beyond one-shot and terminal-only baselines.
 
-That is the main falsifiable question for RSM v0.2.
+## 2. Unit of analysis
 
-## 1. Unit of analysis
-
-Every experiment must define:
+Each experiment specifies:
 
 - seed object,
 - domain,
 - transformation family,
-- transform strength / temperature,
+- transform strength or temperature,
 - recursion depth,
 - replicate count,
 - projections and metrics,
-- external validator if available,
+- external validator,
 - stability profile,
 - baseline methods,
 - primary outcome.
 
-## 2. Required separation: correctness vs stability
+## 3. Stability and correctness
 
-Where ground truth exists, store it separately from RSM stability.
-
-For a seed x:
+For seed (x),
 
 $$
-V(x) \in \{true,false,unknown\}
+V(x)\in\{pass,fail,unknown\}
 $$
 
 and
 
 $$
-C_P(x) \in \{C1,C2,C3\}.
+C_P(x)\in\{C1,C2,C3\}.
 $$
 
-Do not derive one from the other.
+The two fields are recorded independently.
 
-The calibration file includes stable falsehoods and stable paradox strings on purpose. Any implementation that assumes C1 means true should fail those cases conceptually.
-
-## 3. Suggested benchmark domains
+## 4. Benchmark domains
 
 ### Text and factual claims
 
 Transforms:
+
 - paraphrase,
 - summarize-expand,
-- translate-roundtrip,
+- translation round trip,
 - model-to-model relay,
-- noisy rewrite.
+- controlled corruption.
 
-External validators:
+Validators:
+
 - curated fact labels,
 - source-grounded QA,
 - human adjudication.
@@ -61,161 +57,164 @@ External validators:
 ### Code
 
 Transforms:
-- refactor,
-- translate between languages,
-- summarize and regenerate,
-- model repair loops.
 
-External validators:
+- refactor,
+- language translation,
+- summarize-regenerate,
+- repair loops,
+- controlled mutation.
+
+Validators:
+
 - unit tests,
 - static analysis,
-- formal verification when feasible.
+- formal verification.
 
-### Mathematics / symbolic logic
+### Mathematics and symbolic logic
 
 Transforms:
-- canonical rewrite,
-- natural-language explanation and reconstruction,
-- symbolic simplification/expansion.
 
-External validators:
+- canonical rewrite,
+- explanation-reconstruction,
+- symbolic simplification,
+- symbolic expansion.
+
+Validators:
+
 - proof assistants,
 - CAS equivalence,
 - model checking.
 
-### Graphs / plans
+### Graphs and plans
 
 Transforms:
+
 - serialize-deserialize,
 - summarize-reconstruct,
 - edge perturbation,
 - planner revision.
 
-External validators:
+Validators:
+
 - graph invariants,
 - constraint satisfaction,
 - task success.
 
-## 4. Baselines
+## 5. Baselines
 
-At minimum compare RSM against:
+Minimum baseline set:
 
-1. one-shot distance from seed to first transform,
+1. seed-to-first-transform distance,
 2. terminal-only distance,
 3. direct task validator,
-4. self-consistency / majority agreement where applicable,
-5. evaluator confidence or verifier score where available.
+4. self-consistency or majority agreement,
+5. evaluator confidence or verifier score.
 
-For LLM experiments, useful additional baselines may include semantic entropy, NLI contradiction rates, or model log-probability measures.
+LLM experiments may also include semantic entropy, NLI contradiction rate, and model probability features.
 
-The recursive method is interesting only if it adds information beyond these simpler alternatives.
+## 6. Ablations
 
-## 5. Ablations
+Evaluate:
 
-Run at least:
-
-- no recursion: k=1,
+- (k=1),
 - multiple recursion depths,
-- each metric alone,
+- each metric independently,
 - full metric vector,
-- no scalar aggregation,
+- vector-only analysis,
+- scalar aggregation,
 - single transform family,
-- cross-family transform ensemble,
+- transform ensemble,
 - single evaluator,
-- multiple evaluators,
-- fixed vs stochastic transforms.
+- evaluator ensemble,
+- deterministic transforms,
+- stochastic transforms.
 
-## 6. Primary analyses
+## 7. Analyses
 
-Useful questions include:
+Primary analyses include:
 
-- Does early drift predict final task failure?
-- Does slope add value beyond terminal distortion?
-- Does replicate variance identify brittle seeds?
-- Do cycle features distinguish recoverable oscillation from degradation?
-- Does cross-evaluator variance improve abstention decisions?
-- Which components contribute independent predictive value?
+- early drift vs. final task failure,
+- slope vs. terminal distortion,
+- replicate variance vs. brittleness,
+- cycle features vs. recoverability,
+- cross-evaluator variance vs. abstention performance,
+- component-level feature contribution.
 
-## 7. Statistical reporting
+## 8. Statistical reporting
 
-For predictive experiments report, where appropriate:
+Predictive experiments report as applicable:
 
-- AUROC / AUPRC,
+- AUROC,
+- AUPRC,
 - calibration error,
-- precision/recall at declared operating points,
-- confidence intervals via bootstrap,
+- precision and recall at declared operating points,
+- bootstrap confidence intervals,
 - effect sizes,
 - sample counts,
 - predeclared exclusions.
 
-For regression outcomes, report error metrics and uncertainty.
+Regression experiments report error metrics and uncertainty.
 
-Do not report only examples selected after seeing the result.
+## 9. Negative controls
 
-## 8. Negative controls
+### Identity
 
-RSM needs controls that expose nonsense quickly.
-
-### Identity control
-
+$$
 T(x)=x.
+$$
 
-Expected: near-zero drift for every object, regardless of truth.
+Expected behavior: near-zero drift for every seed.
 
-### Representation scramble
+### Destructive transform
 
-Use a transform known to destroy the chosen invariant.
+Use a transform that removes a declared invariant.
 
-Expected: high drift even for externally true seeds.
+Expected behavior: high drift on the affected component.
 
 ### Metric mismatch
 
-Evaluate a semantic task using only surface distance.
+Evaluate a semantic task with a surface-only metric.
 
-Expected: demonstrate failure of the metric, not failure of the seed.
+Expected behavior: weak correspondence with semantic failure.
 
-### Odd/even cycle control
+### Two-cycle
 
-Use a reversible two-cycle such as string reversal.
+Use a reversible period-2 transform such as string reversal.
 
-Expected: full-trajectory reporting must expose the cycle; endpoint-only classification is unacceptable.
+Expected behavior: cycle detection plus alternating trajectory.
 
-## 9. Success criteria
+## 10. Evaluation criteria
 
-A compelling RSM result should show at least one of:
+Evidence for useful recursive signal includes:
 
-- materially better failure prediction than baselines,
+- improved failure prediction over baselines,
 - earlier warning than terminal-only evaluation,
-- robust detection across transform families,
-- useful decomposition of failure source,
-- improved selective prediction / abstention,
-- discovery of recoverable vs irreversible regimes.
+- replication across transform families,
+- useful component-level failure attribution,
+- improved selective prediction,
+- reliable recovery detection.
 
-## 10. Failure criteria
+Weak evidence includes:
 
-The framework should be narrowed or rejected for a domain if:
+- no gain over direct validators,
+- held-out performance collapse,
+- dependence on a single arbitrary metric,
+- no contribution from recursion depth,
+- cross-model replication failure,
+- per-example threshold tuning.
 
-- direct validators dominate all recursive features,
-- results disappear under held-out evaluation,
-- performance depends on one arbitrary metric,
-- recursive depth adds no information,
-- cross-model replication fails,
-- thresholds require post-hoc tuning per example.
+## 11. Reproducibility record
 
-## 11. Reproducibility checklist
-
-Record:
+Store:
 
 - code commit,
 - dataset version,
-- model/provider/version,
+- model and provider version,
 - prompts and decoding parameters,
 - random seeds,
 - recursion depth,
 - replicate count,
 - metric versions,
-- threshold profile,
-- external validator version,
+- audit profile,
+- validator version,
 - raw trajectories.
-
-RSM v0.2 treats reproducibility as more important than vocabulary.

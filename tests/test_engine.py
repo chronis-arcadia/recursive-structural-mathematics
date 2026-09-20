@@ -15,9 +15,9 @@ METRICS = {
 
 
 class TestRSM(unittest.TestCase):
-    def test_identity_is_stable_even_for_false_claim(self):
-        false_claim = "The Sun orbits Earth once per day."
-        result = run_audit(false_claim, lambda x: x, METRICS, steps=6)
+    def test_identity_stability_is_independent_of_external_validity(self):
+        claim = "The Sun orbits Earth once per day."
+        result = run_audit(claim, lambda x: x, METRICS, steps=6)
         self.assertEqual(result.classification, "C1")
         self.assertEqual(result.peak_score, 0.0)
         self.assertEqual(result.cycle_periods, (1,))
@@ -28,7 +28,7 @@ class TestRSM(unittest.TestCase):
             return text[:keep]
 
         result = run_audit(
-            "recursive structure should survive declared transforms",
+            "recursive structure under declared transforms",
             erode,
             METRICS,
             steps=6,
