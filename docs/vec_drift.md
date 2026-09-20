@@ -8,14 +8,14 @@ It does not attribute truth.
 
 For seed x_0, transform family K_q, evaluator e, component j, and recursion step t:
 
-$
+$$
 D^{(q,e)}_{t,j}
 =
 d^{(e)}_j(
 \phi^{(e)}_j(x_t),
 \phi^{(e)}_j(x_0)
 ).
-$
+$$
 
 The full measurement object is therefore a tensor over:
 
@@ -45,13 +45,13 @@ The old term "Observer Drift Variance" is replaced by the more literal **Cross-E
 
 For scalar scores:
 
-$
+$$
 CEV_t
 =
 \frac{1}{|E|}
 \sum_e
 (S_t^{(e)} - \bar S_t)^2.
-$
+$$
 
 For vector measurements, compute component-wise variance.
 
@@ -61,13 +61,13 @@ High CEV means the classification is sensitive to evaluator choice.
 
 Likewise,
 
-$
+$$
 CTV_t
 =
 \frac{1}{|Q|}
 \sum_q
 (S_t^{(q)} - \bar S_t)^2.
-$
+$$
 
 High CTV means stability depends strongly on the perturbation or regeneration regime.
 

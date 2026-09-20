@@ -20,29 +20,29 @@ The old material remains available in Git history.
 
 Let the seed object be x_0 and let K be a deterministic transform or stochastic transformation kernel.
 
-$
+$$
 x_{t+1} \sim K(\cdot \mid x_t)
-$
+$$
 
 Let phi_j extract an invariant or representation relevant to the task, and d_j compare that representation with the seed.
 
-$
+$$
 D_{t,j} = d_j(\phi_j(x_t), \phi_j(x_0))
-$
+$$
 
 The recursive drift vector is:
 
-$
+$$
 \mathbf{D}_t = (D_{t,1}, D_{t,2}, \ldots, D_{t,m})
-$
+$$
 
 RSM studies the trajectory of this vector: magnitude, slope, variance, recovery, cycles, and cross-transform disagreement.
 
 A stability class is therefore conditional:
 
-$
+$$
 C(x \mid K, \Phi, d, k, \theta)
-$
+$$
 
 —not an intrinsic label attached to x.
 

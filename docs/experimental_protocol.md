@@ -28,15 +28,15 @@ Where ground truth exists, store it separately from RSM stability.
 
 For a seed x:
 
-$
+$$
 V(x) \in \{true,false,unknown\}
-$
+$$
 
 and
 
-$
+$$
 C_P(x) \in \{C1,C2,C3\}.
-$
+$$
 
 Do not derive one from the other.
 
