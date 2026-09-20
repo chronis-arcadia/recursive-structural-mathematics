@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "recursive-structural-mathematics"
+version = "0.2.0"
+description = "Experimental recursive structural stability and drift measurement"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Chronis Arcadia" }
+]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
